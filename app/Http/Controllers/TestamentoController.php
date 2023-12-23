@@ -20,7 +20,14 @@ class TestamentoController extends Controller
      */
     public function store(Request $request)
     {
-        return Testamento::create($request->all());
+        if (Testamento::create($request->all())) {
+            return response()->json([
+                'message' => 'Testamento adicionado com sucesso'
+            ], 201);
+        }
+        return response()->json([
+            'message' => 'Nao foi possivel adicionar o Testamento'
+        ], 404);
     }
 
     /**
@@ -28,7 +35,14 @@ class TestamentoController extends Controller
      */
     public function show(string $id)
     {
-        return Testamento::findOrFail($id);
+        $testamento = Testamento::find($id);
+        if ($testamento) {
+            $testamento->livros;
+            return $testamento;
+        }
+        return response()->json([
+            'message' => 'Testamento nao encontrado'
+        ], 404);
     }
 
     /**
@@ -36,9 +50,15 @@ class TestamentoController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $testamento = Testamento::findOrFail($id);
-        $testamento->update($request->all());
-        return $testamento;
+        $testamento = Testamento::find($id);
+        if ($testamento->update($request->all())) {
+            return response()->json([
+                'message' => 'Testamento alterado com sucesso'
+            ]);
+        }
+        return response()->json([
+            'message' => 'Nao foi possivel alterar esse testamento'
+        ], 404);
     }
 
     /**
@@ -46,6 +66,13 @@ class TestamentoController extends Controller
      */
     public function destroy(string $id)
     {
-        return Testamento::destroy($id);
+        if (Testamento::destroy($id)) {
+            return response()->json([
+                'message' => 'Testamento excluido com sucesso'
+            ]);
+        }
+        return response()->json([
+            'message' => 'Nao foi possivel excluir este testamento'
+        ], 404);
     }
 }
